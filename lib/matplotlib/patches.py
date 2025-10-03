@@ -2765,6 +2765,37 @@ class BoxStyle(_Style):
                      [Path.CLOSEPOLY])
             return Path(saw_vertices, codes)
 
+    @_register_style(_style_list)
+    class RightRoadsign:
+        """
+        A box in the shape of a right-pointing roadsign.
+        A roadsign is similar to an arrow, except the tips of the triangular portion
+        of the shape do not protrude from the rectangular portion.
+        """
+        def __init__(self, pad=0.3):
+            """
+            Parameters
+            ----------
+            pad : float, default: 0.3
+                The amount of padding around the original box.
+            """
+            self.pad = pad
+        def __call__(self, x0, y0, width, height, mutation_size):
+            # padding
+            pad = mutation_size * self.pad
+            tip_width = width * 0.2
+
+            # width and height with padding added.
+            width, height = width + 2 * pad, height + 2 * pad
+            # boundary of the padded box
+            x0, y0 = x0 - pad, y0 - pad
+
+            return Path._create_closed(
+                [(x0 , y0), #bottom left
+                 (x0 + width - tip_width, y0),
+                 (x0 + width, y0 + height/2), #tip of arrow
+                 (x0 + width - tip_width, y0 + height),
+                 (x0, y0 + height)]) #top left
 
 @_docstring.interpd
 class ConnectionStyle(_Style):
